@@ -1,7 +1,7 @@
 M48
-; DRILL file {KiCad (6.0.5)} date Thu Jan 19 14:10:41 2023
+; DRILL file {KiCad (6.0.5)} date Thu Jan 19 15:03:17 2023
 ; FORMAT={-:-/ absolute / inch / decimal}
-; #@! TF.CreationDate,2023-01-19T14:10:41-05:00
+; #@! TF.CreationDate,2023-01-19T15:03:17-05:00
 ; #@! TF.GenerationSoftware,Kicad,Pcbnew,(6.0.5)
 ; #@! TF.FileFunction,Plated,1,2,PTH
 FMAT,2
@@ -46,8 +46,8 @@ X4.52Y-4.04
 X4.57Y-3.19
 X4.57Y-3.39
 X4.67Y-4.19
-X4.77Y-3.19
-X4.77Y-3.49
+X4.77Y-3.215
+X4.77Y-3.515
 X4.77Y-4.44
 X4.77Y-4.74
 X4.82Y-3.09
@@ -68,7 +68,7 @@ X5.12Y-4.44
 X5.145Y-2.865
 X5.17Y-2.74
 X5.17Y-3.09
-X5.17Y-3.49
+X5.17Y-3.515
 X5.17Y-3.89
 X5.22Y-3.79
 X5.22Y-4.04
@@ -77,12 +77,12 @@ X5.22Y-4.615
 X5.27Y-2.74
 X5.27Y-2.865
 X5.27Y-4.14
-X5.32Y-3.065
 X5.32Y-3.24
 X5.32Y-4.74
 X5.37Y-2.74
 X5.37Y-2.865
 X5.37Y-2.965
+X5.37Y-3.115
 X5.395Y-4.615
 X5.42Y-4.74
 X5.47Y-2.74
