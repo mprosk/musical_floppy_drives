@@ -125,15 +125,15 @@
     (property "Sheetname" "")
     (path "/da60a574-7ec2-421a-ad07-3acb7e2edf90")
     (attr exclude_from_pos_files)
-    (fp_text reference "H16" (at 0 -4.2) (layer "F.SilkS")
+    (fp_text reference "H16" (at 0 -4.2) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 92d62b57-2c67-43fc-997d-72313dd80383)
     )
-    (fp_text value "MountingHole" (at 0 4.2) (layer "F.Fab")
+    (fp_text value "MountingHole" (at 0 4.2) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp cbd4bcc0-96c2-456c-98b2-ea66ddb847f0)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 6dd50634-5820-45fa-b3c4-c4e76a59a291)
     )
@@ -177,15 +177,15 @@
     (property "Sheetname" "")
     (path "/ed649220-2164-42c0-a046-6acec8dcb52a")
     (attr exclude_from_pos_files)
-    (fp_text reference "H13" (at 0 -4.2) (layer "F.SilkS")
+    (fp_text reference "H13" (at 0 -4.2) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 0ac647dc-7fc2-47a6-aa5c-25c192c22a56)
     )
-    (fp_text value "MountingHole" (at 0 4.2) (layer "F.Fab")
+    (fp_text value "MountingHole" (at 0 4.2) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp e4b4854c-6b90-406c-9c2e-321c62afe646)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp c200637a-4914-4a6e-9d40-892db1783210)
     )
@@ -385,15 +385,15 @@
     (property "Sheetname" "")
     (path "/cb1dbec2-beda-4367-94c6-76c560f18bf1")
     (attr exclude_from_pos_files)
-    (fp_text reference "H15" (at 0 -4.2) (layer "F.SilkS")
+    (fp_text reference "H15" (at 0 -4.2) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp a405e921-9ee5-451d-83b1-76a21250d701)
     )
-    (fp_text value "MountingHole" (at 0 4.2) (layer "F.Fab")
+    (fp_text value "MountingHole" (at 0 4.2) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 9d8cf0b2-bd33-433d-ad5c-17fb4377e1df)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 682e074b-a967-49a2-bc28-9829392f03ec)
     )
@@ -437,15 +437,15 @@
     (property "Sheetname" "")
     (path "/4b5f3762-af04-4ed2-8f07-a69a13d5c54d")
     (attr exclude_from_pos_files)
-    (fp_text reference "H14" (at 0 -4.2) (layer "F.SilkS")
+    (fp_text reference "H14" (at 0 -4.2) (layer "F.SilkS") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 6980235e-a260-480e-92f7-4801bd09f79f)
     )
-    (fp_text value "MountingHole" (at 0 4.2) (layer "F.Fab")
+    (fp_text value "MountingHole" (at 0 4.2) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 6330bbe0-b58f-4dc1-83a0-527bae976210)
     )
-    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab")
+    (fp_text user "${REFERENCE}" (at 0 0) (layer "F.Fab") hide
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 9657cdd2-000e-452f-8f10-0e2a8067edfd)
     )
