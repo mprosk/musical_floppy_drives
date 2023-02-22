@@ -31,23 +31,26 @@
 /*=====================================================================*
     Pin Defines
  *=====================================================================*/
-#define PIN_DEBUG               (2)
+#define PIN_DEBUG0              (18)
+#define PIN_DEBUG1              (19)
+#define PIN_DEBUG2              (20)
+#define PIN_DEBUG3              (21)
 
 /*=====================================================================*
     Private Defines
  *=====================================================================*/
 // The number of floppy voices
-#define FLOPPY_COUNT            (2)
+#define FLOPPY_COUNT            (4)
 // The number of tracks on the stepper
 #define FLOPPY_TRACKS           (80)
 
 // Highest MIDI note the floppies can reproduce
-#define MAXIMUM_NOTE            (60)
+#define MAXIMUM_NOTE            (70)
 
 // Number of bits in the DDS phase accumulator
 #define DDS_PHASE_ACC_BITS      (32)
 // DDS sample rate in Hertz
-#define DDS_SAMPLE_RATE_HZ      (40000.0)
+#define DDS_SAMPLE_RATE_HZ      (10000.0)
 // Constant used in tuning word calculation. 2^(Phase acc. width)
 #define DDS_2POW                (pow(2, DDS_PHASE_ACC_BITS))
 // Bit width of the DDS LUT address space
@@ -63,10 +66,10 @@
 // Container struct for all data associated with a single floppy
 typedef struct floppy_t
 {
-    uint8_t pin_step;       // Pin number of the STEP pin
-    uint8_t pin_dir;        // Pin number of the DIR pin
-    uint8_t pin_select;     // Pin number of the SELECT pin
-    uint8_t pin_trk0;       // Pin number of the TRACK00 pin
+    const uint8_t pin_step;     // Pin number of the STEP pin
+    const uint8_t pin_dir;      // Pin number of the DIR pin
+    const uint8_t pin_select;   // Pin number of the SELECT pin
+    const uint8_t pin_trk0;     // Pin number of the TRACK00 pin
 
     bool direction;         // Current direction of the stepper motor
     uint8_t track;          // Current track of the stepper motor
@@ -101,12 +104,31 @@ static const int8_t INCREMENT[] = {-1, 1};
 // Flag indicating that a DDS update should be performed
 static volatile bool dds_tick = false;
 
-// Floppy structs    PINS: ST  DR  DS  T0
-static floppy_t floppy0 = { 2,  3, A4, A0};     // Floppy 0 struct
-static floppy_t floppy1 = { 4,  5, A5, A1};     // Floppy 1 struct
+// Floppy structs    PINS:  STEP  DIR  SEL  TR0
+static floppy_t floppy0  = {  6,   7,   8,   9};    // Floppy 0 struct
+static floppy_t floppy1  = { 15,  17,  14,  16};    // Floppy 1 struct
+static floppy_t floppy2  = { 23,  25,  22,  24};    // Floppy 2 struct
+static floppy_t floppy3  = { 26,  28,  27,  29};    // Floppy 3 struct
+// static floppy_t floppy4  = { 10,  11,  12,  13};    // Floppy 4 struct
+// static floppy_t floppy5  = {  2,   3,   4,   5};    // Floppy 5 struct
+// static floppy_t floppy6  = { 31,  33,  30,  32};    // Floppy 6 struct
+// static floppy_t floppy7  = { 34,  36,  35,  37};    // Floppy 7 struct
+// static floppy_t floppy8  = {A11, A10,  A9,  A8};    // Floppy 8 struct
+// static floppy_t floppy9  = {A15, A14, A13, A12};    // Floppy 9 struct
+// static floppy_t floppy10 = { 39,  41,  38,  40};    // Floppy 10 struct
+// static floppy_t floppy11 = { 42,  44,  43,  45};    // Floppy 11 struct
+// static floppy_t floppy12 = { A3,  A2,  A1,  A0};    // Floppy 12 struct
+// static floppy_t floppy13 = { A7,  A6,  A5,  A4};    // Floppy 13 struct
+// static floppy_t floppy14 = { 47,  49,  46,  48};    // Floppy 14 struct
+// static floppy_t floppy15 = { 50,  52,  52,  53};    // Floppy 16 struct
 
 // Array containing pointers to each floppy_t struct
-static floppy_t * const floppies[FLOPPY_COUNT] = {&floppy0, &floppy1};
+static floppy_t * const floppies[FLOPPY_COUNT] = { 
+    &floppy0, &floppy1, &floppy2, &floppy3
+    // &floppy4, &floppy5, &floppy6, &floppy7,
+    // &floppy8, &floppy9, &floppy10, &floppy11,
+    // &floppy12, &floppy13, &floppy14, &floppy15
+};
 
 
 /*=====================================================================*
@@ -116,11 +138,13 @@ static floppy_t * const floppies[FLOPPY_COUNT] = {&floppy0, &floppy1};
 void setup()
 {
     // Initialize Serial
-    Serial.begin(115200);
+    Serial.begin(31250);
     
     // Initialize GPIO
-    pinMode(PIN_DEBUG, OUTPUT);
-    pinMode(LED_BUILTIN, OUTPUT);
+    pinMode(PIN_DEBUG0, OUTPUT);
+    pinMode(PIN_DEBUG1, OUTPUT);
+    pinMode(PIN_DEBUG2, OUTPUT);
+    pinMode(PIN_DEBUG3, INPUT_PULLUP);
 
     for (uint8_t f = 0; f < FLOPPY_COUNT; f++)
     {
@@ -135,7 +159,6 @@ void setup()
     {
         floppies[f]->phase_acc = 0;
         floppies[f]->tuning_word = 0;
-        floppies[f]->direction = false;
         floppies[f]->note_on = false;
         floppy_home(floppies[f]);
     }
@@ -145,7 +168,7 @@ void setup()
     TCCR1B = 0;   // same for TCCR1B
     TCNT1  = 0;   //initialize counter value to 0
     // Set compare match register for desired increment
-    OCR1A = 399;// = (16MHz) / (40,000Hz * 1 prescale) - 1 (must be <65536)
+    OCR1A = 1599;// = (16MHz) / (10,000Hz * 1 prescale) - 1 (must be <65536)
     // Turn on CTC mode
     TCCR1B |= (1 << WGM12);
     // Clear the prescaler setting
@@ -172,12 +195,13 @@ void loop()
     // MAIN LOOP
     while (1)
     {
+        // Check if the panic button has been pressed
+        if (!digitalRead(PIN_DEBUG3))
+        {
+            all_notes_off();
+        }
 
-        // Wait until DDS update tick
-        while(!dds_tick) {}
-        dds_tick = false;
-
-        digitalWrite(PIN_DEBUG, HIGH);
+        digitalWrite(PIN_DEBUG0, HIGH);
 
         // Check for incoming MIDI notes
         midi_note_t note;
@@ -225,40 +249,47 @@ void loop()
             default:
                 break;
         }
+        digitalWrite(PIN_DEBUG0, LOW);
         
+        
+        // Only update DDS state when the tick occurs
+        if(!dds_tick) { continue; }
+        
+        digitalWrite(PIN_DEBUG1, HIGH);
+        dds_tick = false;
+
         // Update DDS state for each active voice
         for (uint8_t f = 0; f < FLOPPY_COUNT; f++)
         {
             floppy_t * floppy = floppies[f];
-            if (floppy->note_on)
+            if (!floppy->note_on) {continue;}
+            
+            // Save the current MSB of the phase accumulator
+            uint8_t pre = floppy->phase_acc >> DDS_SHIFT;
+
+            // Update the phase accumulator
+            floppy->phase_acc += floppy->tuning_word;
+            
+            // Check if the MSB of the phase accumulator has changed
+            if (((floppy->phase_acc >> DDS_SHIFT) == 1) && (pre == 0))
             {
-                // Save the current MSB of the phase accumulator
-                uint8_t pre = floppy->phase_acc >> DDS_SHIFT;
-
-                // Update the phase accumulator
-                floppy->phase_acc += floppy->tuning_word;
+                // Update the track position
+                floppy->track += INCREMENT[floppy->direction];
                 
-                // Check if the MSB of the phase accumulator has changed
-                if (((floppy->phase_acc >> DDS_SHIFT) == 1) && (pre == 0))
-                {
-                    // Check if we need to change directions
-                    if ((floppy->track == 0) || (floppy->track == FLOPPY_TRACKS - 1))
-                    {
-                        // Change directions and set the pin accordingly
-                        floppy->direction = !floppy->direction;
-                        digitalWrite(floppy->pin_dir, floppy->direction);
-                    }
-                    
-                    // Step the motor
-                    digitalWrite(floppy->pin_step, LOW);
-                    digitalWrite(floppy->pin_step, HIGH);
+                // Step the motor
+                digitalWrite(floppy->pin_step, LOW);
+                digitalWrite(floppy->pin_step, HIGH);
 
-                    // Update the track position
-                    floppy->track += INCREMENT[floppy->direction];
+                // Check if we need to change directions
+                if ((floppy->track == 0) || (floppy->track == FLOPPY_TRACKS - 1))
+                {
+                    // Change directions and set the pin accordingly
+                    floppy->direction = !floppy->direction;
+                    digitalWrite(floppy->pin_dir, !floppy->direction);
                 }
             }
         }
-        digitalWrite(PIN_DEBUG, LOW);
+        digitalWrite(PIN_DEBUG1, LOW);
     }
 }
 
@@ -337,18 +368,42 @@ uint32_t dds_tuning_word_note(midi_note_t * note)
 void floppy_home(floppy_t * f)
 {
     digitalWrite(f->pin_select, LOW);
-    digitalWrite(f->pin_dir, LOW);
+    digitalWrite(f->pin_dir, HIGH); // High DIR bit is towards TRK00
     while (digitalRead(f->pin_trk0))
     {
         digitalWrite(f->pin_step, LOW);
         digitalWrite(f->pin_step, HIGH);
-        delayMicroseconds(3);
+        delay(10);
     }
     f->track = 0;
+    f->direction = true;
+    digitalWrite(f->pin_dir, LOW);
     digitalWrite(f->pin_select, HIGH);
 }
 
 
+/*---------------------------------------------------------------------*
+ *  NAME
+ *      all_notes_off
+ *
+ *  DESCRIPTION
+ *      Turns all voices off
+ *
+ *  RETURNS
+ *      None
+ *---------------------------------------------------------------------*/
+void all_notes_off(void)
+{
+    for (uint8_t f = 0; f < FLOPPY_COUNT; f++)
+    {
+        floppy_t * floppy = floppies[f];
+        floppy->note_on = false;
+        floppy->phase_acc = 0;
+        digitalWrite(floppy->pin_select, HIGH);
+    }
+}
+
 /*=====================================================================*
     Private Function Implementations
  *=====================================================================*/
+

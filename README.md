@@ -13,3 +13,7 @@ Shield for the Arduino Mega that exposes 16 headers for connecting floppy drives
 ## floppy_bracket
 
 PCB bracket designed to bind four floppy drives together. Two PCBs should be used.
+
+## floppy_power
+
+Power bus board

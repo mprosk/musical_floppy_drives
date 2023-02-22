@@ -292,20 +292,22 @@ midi_note_event_t midi_read(midi_note_t * note_struct)
             note_struct->channel = buf[0];
             note_struct->note = buf[1];
             note_struct->velocity = buf[2];
+            midi_note_event_t return_event = event;
 
             // Check if note on with zero velocity
             if ((event == EVENT_NOTE_ON) && (buf[2] == 0))
             {
                 // Remap this to a note off event
-                event = EVENT_NOTE_OFF;
+                return_event = EVENT_NOTE_OFF;
             }
 
             // Reset the byte count
-            byte_count = 0;
+            // Note events do not clear running status. Preserve the first byte of the buffer
+            byte_count = 1;
 
             // Exiting early here could still leave data in the
             // UART buffer that would have to be processed next loop
-            return event;
+            return return_event;
         }
     }
     return EVENT_NONE;
